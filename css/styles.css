@@ -952,6 +952,14 @@ footer .em {
   color: var(--ink-soft);
 }
 
+.field-input:-webkit-autofill,
+.field-input:-webkit-autofill:hover,
+.field-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--ink);
+  -webkit-box-shadow: 0 0 0px 1000px var(--bg-2) inset;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
 textarea.field-input {
   resize: vertical;
   min-height: 100px;
@@ -962,10 +970,17 @@ textarea.field-input {
 
 select.field-input {
   cursor: pointer;
+  background-color: var(--bg-2);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%234ade80' d='M5 7L1 3h8z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 4px center;
   padding-right: 24px;
+  color: var(--ink);
+}
+
+select.field-input option {
+  background-color: var(--bg-2);
+  color: var(--ink);
 }
 
 .field-error {
@@ -1407,7 +1422,7 @@ body.modal-open {
 
 .intro-reveal {
   position: relative;
-  height: 520vh;            /* 4 stages × ~130vh of scroll runway */
+  height: 390vh;            /* 3 stages × ~130vh of scroll runway */
   background: #05070a;
   z-index: 2;
   isolation: isolate;
@@ -1532,18 +1547,6 @@ body.modal-open {
   pointer-events: auto;
 }
 
-/* STAGE 1 — "KIC" mega text */
-.stage-1 .stage-eyebrow {
-  font-family: var(--sans);
-  font-weight: 400;
-  font-size: 11px;
-  letter-spacing: 0.6em;
-  color: var(--green);
-  margin-bottom: 28px;
-  padding-left: 0.6em;
-  text-transform: uppercase;
-}
-
 .stage-mega {
   font-family: var(--sans);
   font-weight: 700;
@@ -1565,16 +1568,6 @@ body.modal-open {
   background: var(--green);
   box-shadow: 0 0 18px var(--green);
   opacity: 0.9;
-}
-
-.stage-1 .stage-footnote {
-  font-family: var(--sans);
-  font-weight: 400;
-  font-size: 12px;
-  letter-spacing: 0.45em;
-  color: var(--ink-dim);
-  margin-top: 36px;
-  text-transform: uppercase;
 }
 
 /* STAGE 2 — Kick / Inspire / Conquer */

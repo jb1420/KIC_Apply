@@ -17,18 +17,13 @@
 
   // Global progress ranges for each stage: [enterStart, enterEnd, exitStart, exitEnd]
   const timelines = [
-    [-0.20, 0.00, 0.18, 0.28],   // Stage 1 — KIC: present at top, exits first
-    [ 0.24, 0.34, 0.44, 0.54],   // Stage 2 — Kick / Inspire / Conquer
-    [ 0.50, 0.62, 0.70, 0.80],   // Stage 3 — Dream Begins, Dream Ends
-    [ 0.78, 0.90, 1.20, 1.40],   // Stage 4 — CTA: holds until end
+    [-0.20, 0.00, 0.28, 0.40],   // Stage 2 — Kick / Inspire / Conquer (now first)
+    [ 0.36, 0.50, 0.60, 0.72],   // Stage 3 — Dream Begins, Dream Ends
+    [ 0.68, 0.84, 1.20, 1.40],   // Stage 4 — CTA: holds until end
   ];
 
   // Per-stage choreography.
   const choreo = [
-    { // Stage 1 — rise from below, exit upward (no rotate / scale / blur)
-      enter: { rot:   0, scale: 1.00, x: 0,    y: 120, blur:  0 },
-      exit:  { rot:   0, scale: 1.00, x: 0,    y:-120, blur:  0 },
-    },
     { // Stage 2 — rise from below, exit upward (no rotate / scale / blur)
       enter: { rot:   0, scale: 1.00, x: 0,    y: 120, blur:  0 },
       exit:  { rot:   0, scale: 1.00, x: 0,    y:-120, blur:  0 },
@@ -109,11 +104,11 @@
 
     // ---- Inner choreography (per-stage micro-motion) ----
 
-    // Stage 2 — stagger the three words
+    // Stage 2 — stagger the three words (now index 0)
     {
-      const [es, ee] = timelines[1];
+      const [es, ee] = timelines[0];
       const local = clamp((p - es) / (ee - es), 0, 1);
-      const words = stages[1].querySelectorAll('.word');
+      const words = stages[0].querySelectorAll('.word');
       words.forEach((w, idx) => {
         const t = ease(clamp((local - idx * 0.14) / 0.5, 0, 1));
         w.style.transform =
@@ -123,11 +118,11 @@
       });
     }
 
-    // Stage 3 — rise from below, staggered
+    // Stage 3 — rise from below, staggered (now index 1)
     {
-      const [es, ee] = timelines[2];
+      const [es, ee] = timelines[1];
       const local = clamp((p - es) / (ee - es), 0, 1);
-      const lines = stages[2].querySelectorAll('.line');
+      const lines = stages[1].querySelectorAll('.line');
       if (lines[0]) {
         const t = ease(local);
         lines[0].style.transform = `translateY(${lerp(60, 0, t).toFixed(1)}px)`;
@@ -140,15 +135,15 @@
       }
     }
 
-    // Stage 4 — prelude fades in before CTA, hint fades in last.
+    // Stage 4 — prelude fades in before CTA, hint fades in last. (now index 2)
     // NOTE: the Apply button (<button>) is intentionally left untouched
     // so its :hover CSS transform keeps working. The stage-level
     // transform already carries the button into view.
     {
-      const [es, ee] = timelines[3];
+      const [es, ee] = timelines[2];
       const local = clamp((p - es) / (ee - es), 0, 1);
-      const prelude = stages[3].querySelector('.stage-prelude');
-      const hint    = stages[3].querySelector('.scroll-to-main');
+      const prelude = stages[2].querySelector('.stage-prelude');
+      const hint    = stages[2].querySelector('.scroll-to-main');
       if (prelude) {
         const t = ease(clamp(local / 0.35, 0, 1));
         prelude.style.opacity   = t.toFixed(3);
