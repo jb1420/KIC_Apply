@@ -72,16 +72,25 @@
       <div class="stage-eyebrow">— K S A —</div>
       <h1 class="stage-mega">KIC</h1>
       <div class="stage-footnote">INNOVATION · CHALLENGE · 2026</div>
+
+      <div class="scroll-ind">
+        SCROLL FOR DETAILS
+        <div class="line"></div>
+      </div>
     </div>
 
     <!-- STAGE 2: Kick / Inspire / Conquer -->
     <div class="stage stage-2" data-stage="2">
       <div class="stage-wordlist">
-        <div class="word word-a"><span class="wk">K</span>ick<span class="dot">.</span></div>
+        <div class="word word-a"><span class="wk">K</span>ickstart<span class="dot">.</span></div>
         <div class="word word-b"><span class="wk">I</span>nspire<span class="dot">.</span></div>
         <div class="word word-c"><span class="wk">C</span>onquer<span class="dot">.</span></div>
       </div>
       <div class="stage-caption">제 <em>3회</em> KIC</div>
+      <div class="scroll-ind">
+        SCROLL FOR DETAILS
+        <div class="line"></div>
+      </div>
     </div>
 
     <!-- STAGE 3: Dream Begins, Dream Ends -->
@@ -91,6 +100,10 @@
         <span class="line"><span class="serif">Dream</span> Ends.</span>
       </h2>
       <div class="stage-caption stage-caption-lg">세상을 바꾸는 <em>24시간</em></div>
+      <div class="scroll-ind">
+        SCROLL FOR DETAILS
+        <div class="line"></div>
+      </div>
     </div>
 
     <!-- STAGE 4: CTA + scroll hint -->
@@ -100,13 +113,17 @@
         <span class="ia-text">지금 지원하세요</span>
         <span class="ia-arrow" aria-hidden="true">→</span>
       </button>
-      <a class="scroll-to-main" href="#mainpage">
-        <span class="stm-label">자세한 내용은 아래에</span>
+      <a class="scroll-to-main" href="#mainpage" style="width: 500px;">
+        <!-- <span class="stm-label">자세한 내용은 아래에</span>
         <span class="stm-chev" aria-hidden="true">
           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.4">
             <path d="M6 9 L12 15 L18 9"/>
           </svg>
-        </span>
+        </span> -->
+        <div class="scroll-ind">
+          SCROLL FOR DETAILS
+          <div class="line"></div>
+        </div>
       </a>
     </div>
 
@@ -364,11 +381,10 @@
   <section class="final-cta" id="apply">
     <h2>Ready to <em>begin</em>?</h2>
     <p>지원은 4월 20일(월)부터 4월 22일(수)까지 가능합니다.</p>
-    <button class="apply-btn" onclick="openModal()">
-      <span>지원서 작성하기</span>
-      <span class="date-tag">ENLIST NOW</span>
-      <span class="arrow">→</span>
-    </button>
+    <button type="button" class="intro-apply" onclick="openModal()">
+        <span class="ia-text">지금 지원하세요</span>
+        <span class="ia-arrow" aria-hidden="true">→</span>
+      </button>
   </section>
 
 </div>
@@ -407,14 +423,14 @@
 
         <div class="field">
           <label class="field-label">팀명<span class="req">*</span></label>
-          <input type="text" class="field-input" name="teamName" maxlength="30" placeholder="예: 알고리즘의 새벽" required>
+          <input type="text" class="field-input" name="teamName" maxlength="30" placeholder="예: 미라클나잇" required>
           <div class="field-error" data-for="teamName"></div>
         </div>
 
-        <div class="field">
+        <!-- <div class="field">
           <label class="field-label">팀 슬로건 / 한 줄 포부</label>
           <input type="text" class="field-input" name="teamSlogan" maxlength="60" placeholder="24시간 뒤, 세상은 우리를 기억할 것이다">
-        </div>
+        </div> -->
       </div>
 
       <!-- STEP 2: CREW -->

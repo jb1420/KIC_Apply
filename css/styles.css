@@ -1100,8 +1100,9 @@ select.field-input {
   background: transparent;
   cursor: pointer;
   position: relative;
-  margin-top: 1px;
+  margin-top: 5px;
   transition: all 0.2s;
+  border-color: white;
 }
 
 .check input[type="checkbox"]:checked {

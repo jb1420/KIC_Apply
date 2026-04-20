@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'kic2026-draft-v2';
+const SERVER_URL = 'https://jb1420.pythonanywhere.com/enroll'; // 나중에 서버 URL 입력 (예: https://api.your-server.com/submissions)
 let currentStep = 1;
 const totalSteps = 3;
 const stepNames = ['TEAM', 'CREW', 'CONFIRM'];
@@ -318,15 +319,40 @@ async function submitForm() {
     const appId = 'KIC26-' + Math.random().toString(36).substring(2, 8).toUpperCase();
     data.applicationId = appId;
 
+    // 서버로 제출
+    if (SERVER_URL) {
+      const response = await fetch(SERVER_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) {
+        throw new Error(`서버 오류: ${response.status} ${response.statusText}`);
+      }
+
+      // 서버 응답 처리 (필요시)
+      // const result = await response.json();
+    } else {
+      // 서버 URL이 설정되지 않으면 로컬 스토리지에만 저장
+      console.warn('SERVER_URL이 설정되지 않았습니다. 데이터는 로컬에만 저장됩니다.');
+      if (window.storage) {
+        await window.storage.set(`submission:${appId}`, JSON.stringify(data), true);
+        await window.storage.delete(STORAGE_KEY);
+      }
+    }
+
+    // 드래프트 로컬 저장소 정리
     if (window.storage) {
-      await window.storage.set(`submission:${appId}`, JSON.stringify(data), true);
       await window.storage.delete(STORAGE_KEY);
     }
 
     await new Promise(r => setTimeout(r, 1000));
     currentStep = 4;
     showStep(4);
-    document.getElementById('appId').textContent = appId;
+    // document.getElementById('appId').textContent = appId;
 
     const successMembers = document.getElementById('successMembers');
     if (successMembers) {
@@ -349,6 +375,18 @@ async function submitForm() {
     nextBtn.textContent = '제출하기 ✓';
   }
 }
+
+// ============ CHECKBOX DIV CLICK ============
+document.querySelectorAll('.check').forEach(checkDiv => {
+  checkDiv.style.cursor = 'pointer';
+  checkDiv.addEventListener('click', () => {
+    const checkbox = checkDiv.querySelector('input[type="checkbox"]');
+    if (checkbox) {
+      checkbox.checked = !checkbox.checked;
+      saveDraft();
+    }
+  });
+});
 
 loadDraft();
 showStep(1);
