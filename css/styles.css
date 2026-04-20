@@ -208,7 +208,7 @@ body {
 
 .hero-kr {
   font-size: clamp(14px, 2.2vw, 16px);
-  color: var(--ink-soft);
+  color: var(--ink-dim);
   margin-bottom: 56px;
   font-weight: 400;
 }

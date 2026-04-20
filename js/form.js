@@ -379,7 +379,11 @@ async function submitForm() {
 // ============ CHECKBOX DIV CLICK ============
 document.querySelectorAll('.check').forEach(checkDiv => {
   checkDiv.style.cursor = 'pointer';
-  checkDiv.addEventListener('click', () => {
+  checkDiv.addEventListener('click', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'LABEL' || e.target.closest('label')) {
+      saveDraft();
+      return;
+    }
     const checkbox = checkDiv.querySelector('input[type="checkbox"]');
     if (checkbox) {
       checkbox.checked = !checkbox.checked;
