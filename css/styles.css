@@ -1061,9 +1061,7 @@ select.field-input {
   transition: all 0.3s;
   margin-top: 4px;
   text-transform: uppercase;
-}
 
-.add-btn:hover:not(:disabled) {
   border-color: var(--green);
   color: var(--green);
   background: rgba(74, 222, 128, 0.03);
