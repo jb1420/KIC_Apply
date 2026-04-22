@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIC 2026 · 관리자</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <main class="admin">
+    <header class="admin-header">
+      <div class="admin-brand">
+        <span class="admin-mark">KIC · 26</span>
+        <span class="admin-title">ADMIN</span>
+      </div>
+      <div class="admin-meta" id="adminMeta"></div>
+    </header>
+
+    <!-- LOGIN -->
+    <section class="login-panel" id="loginPanel">
+      <div class="login-card">
+        <div class="login-label">관리자 인증</div>
+        <h1 class="login-heading">Dashboard Access</h1>
+        <p class="login-sub">지원 현황을 확인하려면 비밀번호를 입력하세요.</p>
+
+        <form id="loginForm" class="login-form">
+          <label class="field-label" for="password">비밀번호</label>
+          <input type="password" id="password" class="field-input" autocomplete="current-password" required>
+          <div class="login-error" id="loginError"></div>
+          <button type="submit" class="login-btn" id="loginBtn">입장하기 →</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- DASHBOARD -->
+    <section class="dashboard" id="dashboard" style="display:none;">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">총 지원 팀</div>
+          <div class="stat-value" id="statTeams">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">총 인원</div>
+          <div class="stat-value" id="statMembers">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">최근 제출</div>
+          <div class="stat-value small" id="statLatest">—</div>
+        </div>
+      </div>
+
+      <div class="toolbar">
+        <input type="text" id="searchInput" class="search-input" placeholder="팀명 / 이름 / 지원 ID 검색...">
+        <button class="tool-btn" id="refreshBtn">↻ 새로고침</button>
+        <button class="tool-btn" id="csvBtn">↓ CSV</button>
+        <button class="tool-btn danger" id="logoutBtn">로그아웃</button>
+      </div>
+
+      <div class="submissions" id="submissions"></div>
+      <div class="empty" id="emptyState" style="display:none;">제출된 지원서가 없습니다.</div>
+    </section>
+  </main>
+
+  <script src="admin.js"></script>
+</body>
+</html>
