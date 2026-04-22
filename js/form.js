@@ -45,7 +45,7 @@ function createMemberCard(idx, isLeader = false) {
       </div>
       <div>
         <label class="field-label">학번</label>
-        <input type="text" class="field-input" name="memberStudentId_${idx}" maxlength="10" placeholder="20250001" required>
+        <input type="text" class="field-input" name="memberStudentId_${idx}" maxlength="10" placeholder="26-000" required>
       </div>
       <div>
         <label class="field-label">옷 사이즈</label>
