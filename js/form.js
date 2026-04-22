@@ -48,16 +48,6 @@ function createMemberCard(idx, isLeader = false) {
         <input type="text" class="field-input" name="memberStudentId_${idx}" maxlength="10" placeholder="26-000" required>
       </div>
       <div>
-        <label class="field-label">옷 사이즈</label>
-        <select class="field-input" name="memberSize_${idx}" required>
-          <option value="">— 사이즈 선택 —</option>
-          <option value="S">S</option>
-          <option value="M">M</option>
-          <option value="L">L</option>
-          <option value="XL">XL</option>
-        </select>
-      </div>
-      <div>
         <label class="field-label">학년</label>
         <select class="field-input" name="memberGrade_${idx}" required>
           <option value="">— 학년 선택 —</option>
@@ -70,6 +60,16 @@ function createMemberCard(idx, isLeader = false) {
         <label class="field-label">반</label>
         <select class="field-input" name="memberRoom_${idx}" required>
           <option value="">— 반 선택 —</option>
+        </select>
+      </div>
+      <div>
+        <label class="field-label">옷 사이즈</label>
+        <select class="field-input" name="memberSize_${idx}" required>
+          <option value="">— 사이즈 선택 —</option>
+          <option value="S">S</option>
+          <option value="M">M</option>
+          <option value="L">L</option>
+          <option value="XL">XL</option>
         </select>
       </div>
       <div class="full">
