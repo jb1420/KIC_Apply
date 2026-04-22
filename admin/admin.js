@@ -118,12 +118,13 @@ async function loadSubmissions() {
 }
 
 function renderStats() {
-  statTeams.textContent = allSubmissions.length;
-  const totalMembers = allSubmissions.reduce((sum, s) => sum + (s.members?.length || 0), 0);
+  const visibleSubmissions = allSubmissions.filter(sub => !sub.hidden);
+  statTeams.textContent = visibleSubmissions.length;
+  const totalMembers = visibleSubmissions.reduce((sum, s) => sum + (s.members?.length || 0), 0);
   statMembers.textContent = totalMembers;
 
-  if (allSubmissions.length > 0) {
-    const latest = [...allSubmissions].sort((a, b) =>
+  if (visibleSubmissions.length > 0) {
+    const latest = [...visibleSubmissions].sort((a, b) =>
       new Date(b.submittedAt || 0) - new Date(a.submittedAt || 0)
     )[0];
     statLatest.textContent = formatTime(latest.submittedAt);
