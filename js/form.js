@@ -14,14 +14,19 @@ function updateRoomOptions(gradeSelect, roomSelect) {
   const prevRoom = roomSelect.value;
   roomSelect.innerHTML = '<option value="">— 반 선택 —</option>';
   if (!grade) return;
-  const count = grade === 'RAA' ? 6 : 12;
-  for (let i = 1; i <= count; i++) {
+  for (let i = 1; i <= 12; i++) {
     const opt = document.createElement('option');
     opt.value = String(i);
     opt.textContent = `${i}반`;
     roomSelect.appendChild(opt);
   }
-  if (prevRoom && Number(prevRoom) <= count) roomSelect.value = prevRoom;
+  for (let i = 1; i <= 6; i++) {
+    const opt = document.createElement('option');
+    opt.value = `RAA${i}`;
+    opt.textContent = `RAA ${i}반`;
+    roomSelect.appendChild(opt);
+  }
+  if (prevRoom) roomSelect.value = prevRoom;
 }
 
 function createMemberCard(idx, isLeader = false) {
@@ -37,6 +42,10 @@ function createMemberCard(idx, isLeader = false) {
       <div>
         <label class="field-label">이름</label>
         <input type="text" class="field-input" name="memberName_${idx}" maxlength="20" placeholder="홍길동" required>
+      </div>
+      <div>
+        <label class="field-label">학번</label>
+        <input type="text" class="field-input" name="memberStudentId_${idx}" maxlength="10" placeholder="20250001" required>
       </div>
       <div>
         <label class="field-label">옷 사이즈</label>
@@ -55,7 +64,6 @@ function createMemberCard(idx, isLeader = false) {
           <option value="1">1학년</option>
           <option value="2">2학년</option>
           <option value="3">3학년</option>
-          <option value="RAA">RAA</option>
         </select>
       </div>
       <div>
@@ -263,6 +271,7 @@ async function loadDraft() {
         membersWrap.appendChild(card);
         const findEl = (name) => card.querySelector(`[name="${name}_${i}"]`);
         if (findEl('memberName')) findEl('memberName').value = m.name || '';
+        if (findEl('memberStudentId')) findEl('memberStudentId').value = m.studentId || '';
         if (findEl('memberGrade') && m.grade) {
           findEl('memberGrade').value = m.grade;
           const roomSel = findEl('memberRoom');
@@ -289,6 +298,7 @@ function collectFormData() {
   membersWrap.querySelectorAll('.member').forEach((c, i) => {
     members.push({
       name: c.querySelector(`[name="memberName_${i}"]`)?.value || '',
+      studentId: c.querySelector(`[name="memberStudentId_${i}"]`)?.value || '',
       grade: c.querySelector(`[name="memberGrade_${i}"]`)?.value || '',
       room: c.querySelector(`[name="memberRoom_${i}"]`)?.value || '',
       size: c.querySelector(`[name="memberSize_${i}"]`)?.value || '',
@@ -357,8 +367,8 @@ async function submitForm() {
     const successMembers = document.getElementById('successMembers');
     if (successMembers) {
       successMembers.innerHTML = data.members.map((m, i) => {
-        const gradeLabel = m.grade === 'RAA' ? 'RAA' : (m.grade ? `${m.grade}학년` : '');
-        const roomLabel = m.room ? ` ${m.room}반` : '';
+        const gradeLabel = m.grade ? `${m.grade}학년` : '';
+        const roomLabel = m.room ? (m.room.startsWith('RAA') ? ` ${m.room}` : ` ${m.room}반`) : '';
         const classLabel = gradeLabel ? `${gradeLabel}${roomLabel}` : '';
         const tag = i === 0 ? 'LEADER' : `MEMBER ${String(i + 1).padStart(2, '0')}`;
         return `<div class="success-member">
