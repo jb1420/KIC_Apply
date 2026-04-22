@@ -18,8 +18,10 @@ const searchInput = document.getElementById('searchInput');
 const refreshBtn = document.getElementById('refreshBtn');
 const logoutBtn = document.getElementById('logoutBtn');
 const csvBtn = document.getElementById('csvBtn');
+const filterBtn = document.getElementById('filterBtn');
 
 let allSubmissions = [];
+let showHidden = false;
 
 // ============ AUTH ============
 function getToken() {
@@ -171,6 +173,7 @@ function renderSubmissions(list) {
   );
 
   submissionsEl.innerHTML = sorted.map(sub => {
+    const isHidden = sub.hidden;
     const members = (sub.members || []).map((m, i) => {
       const isLeader = i === 0;
       const grade = gradeLabel(m.grade);
@@ -191,37 +194,80 @@ function renderSubmissions(list) {
     }).join('');
 
     return `
-      <div class="sub-card">
+      <div class="sub-card ${isHidden ? 'hidden' : ''}">
         <div class="sub-header">
           <div class="sub-head-left">
             <div class="sub-id">${escapeHtml(sub.applicationId || '—')}</div>
             <div class="sub-team">${escapeHtml(sub.teamName) || '(팀명 없음)'}</div>
             ${sub.teamSlogan ? `<div class="sub-slogan">"${escapeHtml(sub.teamSlogan)}"</div>` : ''}
+            ${isHidden ? '<div class="hidden-badge">숨김</div>' : ''}
           </div>
-          <div class="sub-time">${formatTime(sub.submittedAt)}</div>
+          <div class="sub-actions">
+            <button class="hide-btn ${isHidden ? 'hidden' : ''}" data-app-id="${escapeHtml(sub.applicationId)}">
+              ${isHidden ? '표시' : '숨기기'}
+            </button>
+            <div class="sub-time">${formatTime(sub.submittedAt)}</div>
+          </div>
         </div>
         <div class="sub-divider"></div>
         <div class="members-grid">${members}</div>
       </div>
     `;
   }).join('');
+
+  document.querySelectorAll('.hide-btn').forEach(btn => {
+    btn.addEventListener('click', () => toggleHidden(btn.dataset.appId, btn));
+  });
+}
+
+async function toggleHidden(appId, btn) {
+  const token = getToken();
+  if (!token) return;
+
+  try {
+    const res = await fetch(`${SERVER_URL}/admin/toggle-hidden/${encodeURIComponent(appId)}`, {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+
+    if (!res.ok) throw new Error(`오류: ${res.status}`);
+
+    const data = await res.json();
+    await loadSubmissions();
+  } catch (err) {
+    alert('오류: ' + err.message);
+  }
+}
+
+// ============ FILTER ============
+filterBtn.addEventListener('click', () => {
+  showHidden = !showHidden;
+  filterBtn.classList.toggle('active', showHidden);
+  applyFilters();
+});
+
+function applyFilters() {
+  const q = searchInput.value.trim().toLowerCase();
+  let filtered = allSubmissions;
+
+  if (!showHidden) {
+    filtered = filtered.filter(sub => !sub.hidden);
+  }
+
+  if (q) {
+    filtered = filtered.filter(sub => {
+      if ((sub.teamName || '').toLowerCase().includes(q)) return true;
+      if ((sub.applicationId || '').toLowerCase().includes(q)) return true;
+      if ((sub.members || []).some(m => (m.name || '').toLowerCase().includes(q))) return true;
+      return false;
+    });
+  }
+
+  renderSubmissions(filtered);
 }
 
 // ============ SEARCH ============
-searchInput.addEventListener('input', () => {
-  const q = searchInput.value.trim().toLowerCase();
-  if (!q) {
-    renderSubmissions(allSubmissions);
-    return;
-  }
-  const filtered = allSubmissions.filter(sub => {
-    if ((sub.teamName || '').toLowerCase().includes(q)) return true;
-    if ((sub.applicationId || '').toLowerCase().includes(q)) return true;
-    if ((sub.members || []).some(m => (m.name || '').toLowerCase().includes(q))) return true;
-    return false;
-  });
-  renderSubmissions(filtered);
-});
+searchInput.addEventListener('input', applyFilters);
 
 // ============ REFRESH ============
 refreshBtn.addEventListener('click', loadSubmissions);

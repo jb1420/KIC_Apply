@@ -5,7 +5,10 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:8765/index.html)",
       "Bash(curl -s -o /dev/null -w \"html:%{http_code}\\\\n\" http://localhost:8765/index.html)",
       "Bash(curl -s -o /dev/null -w \"css:%{http_code}\\\\n\" http://localhost:8765/css/styles.css)",
-      "Bash(curl -s -o /dev/null -w \"js:%{http_code}\\\\n\" http://localhost:8765/js/intro.js)"
+      "Bash(curl -s -o /dev/null -w \"js:%{http_code}\\\\n\" http://localhost:8765/js/intro.js)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }

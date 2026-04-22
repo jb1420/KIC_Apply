@@ -92,3 +92,27 @@ def admin_submissions():
         member_list = []
 
     return jsonify({"submissions": member_list, "count": len(member_list)}), 200
+
+
+@app.route('/admin/toggle-hidden/<app_id>', methods=['POST'])
+def toggle_hidden(app_id):
+    if not _require_admin():
+        return jsonify({"error": "Unauthorized"}), 401
+
+    if not os.path.exists(DATA_FILE):
+        return jsonify({"error": "No data file"}), 404
+
+    with open(DATA_FILE, 'r', encoding='utf-8') as f:
+        try:
+            member_list = json.load(f)
+        except json.JSONDecodeError:
+            return jsonify({"error": "Invalid JSON"}), 400
+
+    for sub in member_list:
+        if sub.get('applicationId') == app_id:
+            sub['hidden'] = not sub.get('hidden', False)
+            with open(DATA_FILE, 'w', encoding='utf-8') as f:
+                json.dump(member_list, f, ensure_ascii=False, indent=4)
+            return jsonify({"hidden": sub['hidden']}), 200
+
+    return jsonify({"error": "Team not found"}), 404
