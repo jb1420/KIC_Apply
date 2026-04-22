@@ -14,7 +14,7 @@ function updateRoomOptions(gradeSelect, roomSelect) {
   const prevRoom = roomSelect.value;
   roomSelect.innerHTML = '<option value="">— 반 선택 —</option>';
   if (!grade) return;
-  const count = grade === 'RAA' ? 4 : 12;
+  const count = grade === 'RAA' ? 6 : 12;
   for (let i = 1; i <= count; i++) {
     const opt = document.createElement('option');
     opt.value = String(i);
