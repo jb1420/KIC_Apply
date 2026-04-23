@@ -187,6 +187,7 @@ function renderSubmissions(list) {
           <div class="member-name">${escapeHtml(m.name) || '—'}</div>
           <div class="member-info">
             ${cls ? `<span>${escapeHtml(cls)}</span>` : ''}
+            ${m.studentId ? `<span>${escapeHtml(m.studentId)}</span>` : ''}
             ${m.size ? `<span>SIZE <strong>${escapeHtml(m.size)}</strong></span>` : ''}
             ${m.contact ? `<span>${escapeHtml(m.contact)}</span>` : ''}
           </div>
