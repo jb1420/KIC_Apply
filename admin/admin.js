@@ -376,11 +376,12 @@ refreshBtn.addEventListener('click', loadSubmissions);
 
 // ============ CSV EXPORT ============
 csvBtn.addEventListener('click', () => {
-  if (!allSubmissions.length) return;
+  const exportList = allSubmissions.filter(sub => !sub.hidden);
+  if (!exportList.length) return;
   const rows = [
     ['applicationId', 'teamName', 'teamSlogan', 'submittedAt', 'memberRole', 'name', 'grade', 'room', 'size', 'contact']
   ];
-  allSubmissions.forEach(sub => {
+  exportList.forEach(sub => {
     (sub.members || []).forEach((m, i) => {
       rows.push([
         sub.applicationId || '',
