@@ -379,7 +379,7 @@ csvBtn.addEventListener('click', () => {
   const exportList = allSubmissions.filter(sub => !sub.hidden);
   if (!exportList.length) return;
   const rows = [
-    ['applicationId', 'teamName', 'teamSlogan', 'submittedAt', 'memberRole', 'name', 'grade', 'room', 'size', 'contact']
+    ['applicationId', 'teamName', 'teamSlogan', 'submittedAt', 'memberRole', 'name', 'grade', 'room', 'studentId', 'size', 'contact']
   ];
   exportList.forEach(sub => {
     (sub.members || []).forEach((m, i) => {
@@ -389,7 +389,7 @@ csvBtn.addEventListener('click', () => {
         sub.teamSlogan || '',
         sub.submittedAt || '',
         i === 0 ? 'LEADER' : `MEMBER${i + 1}`,
-        m.name || '', m.grade || '', m.room || '', m.size || '', m.contact || ''
+        m.name || '', m.grade || '', m.room || '', m.studentId || '', m.size || '', m.contact || ''
       ]);
     });
   });
