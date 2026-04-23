@@ -3,6 +3,7 @@ import json
 import hmac
 import hashlib
 import secrets
+import time
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
@@ -19,23 +20,36 @@ ADMIN_PASSWORD = 'CHANGE_ME'
 # 토큰 서명용 시크릿 (나중에 직접 수정 — 긴 랜덤 문자열 권장)
 ADMIN_SECRET = 'CHANGE_ME_TO_A_LONG_RANDOM_STRING'
 
+# 토큰 유효 기간 (초). 7일.
+TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60
+
 
 def _make_token():
-    """간단한 HMAC 토큰: <random>.<signature>"""
+    """HMAC 토큰: <nonce>.<expiry>.<signature> — expiry까지 서명에 포함"""
     nonce = secrets.token_urlsafe(24)
-    sig = hmac.new(ADMIN_SECRET.encode(), nonce.encode(), hashlib.sha256).hexdigest()
-    return f"{nonce}.{sig}"
+    expiry = str(int(time.time()) + TOKEN_TTL_SECONDS)
+    payload = f"{nonce}.{expiry}"
+    sig = hmac.new(ADMIN_SECRET.encode(), payload.encode(), hashlib.sha256).hexdigest()
+    return f"{payload}.{sig}"
 
 
 def _verify_token(token):
-    if not token or '.' not in token:
+    if not token:
+        return False
+    parts = token.split('.')
+    if len(parts) != 3:
+        return False
+    nonce, expiry, sig = parts
+    payload = f"{nonce}.{expiry}"
+    expected = hmac.new(ADMIN_SECRET.encode(), payload.encode(), hashlib.sha256).hexdigest()
+    if not hmac.compare_digest(expected, sig):
         return False
     try:
-        nonce, sig = token.split('.', 1)
+        if int(expiry) < int(time.time()):
+            return False
     except ValueError:
         return False
-    expected = hmac.new(ADMIN_SECRET.encode(), nonce.encode(), hashlib.sha256).hexdigest()
-    return hmac.compare_digest(expected, sig)
+    return True
 
 
 def _require_admin():

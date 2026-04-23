@@ -1,5 +1,7 @@
 const SERVER_URL = 'https://jb1420.pythonanywhere.com';
 const TOKEN_KEY = 'kic2026-admin-token';
+const SEEN_IDS_KEY = 'kic2026-admin-seen-ids';
+const POLL_INTERVAL_MS = 30 * 1000;
 
 const loginPanel = document.getElementById('loginPanel');
 const dashboard = document.getElementById('dashboard');
@@ -22,18 +24,42 @@ const filterBtn = document.getElementById('filterBtn');
 
 let allSubmissions = [];
 let showHidden = false;
+let pollTimer = null;
 
 // ============ AUTH ============
+// localStorage 사용 → 브라우저를 닫아도 토큰이 유지됨 (서버 토큰 만료는 7일)
 function getToken() {
-  return sessionStorage.getItem(TOKEN_KEY);
+  return localStorage.getItem(TOKEN_KEY);
 }
 
 function setToken(t) {
-  sessionStorage.setItem(TOKEN_KEY, t);
+  localStorage.setItem(TOKEN_KEY, t);
 }
 
 function clearToken() {
-  sessionStorage.removeItem(TOKEN_KEY);
+  localStorage.removeItem(TOKEN_KEY);
+}
+
+function isTokenExpired(t) {
+  if (!t) return true;
+  const parts = t.split('.');
+  if (parts.length !== 3) return true;
+  const expiry = parseInt(parts[1], 10);
+  if (!Number.isFinite(expiry)) return true;
+  return Date.now() / 1000 >= expiry;
+}
+
+// ============ SEEN IDS (푸시 알림용) ============
+function getSeenIds() {
+  try {
+    return new Set(JSON.parse(localStorage.getItem(SEEN_IDS_KEY) || '[]'));
+  } catch {
+    return new Set();
+  }
+}
+
+function setSeenIds(set) {
+  localStorage.setItem(SEEN_IDS_KEY, JSON.stringify([...set]));
 }
 
 loginForm.addEventListener('submit', async (e) => {
@@ -72,6 +98,7 @@ loginForm.addEventListener('submit', async (e) => {
 
 logoutBtn.addEventListener('click', () => {
   clearToken();
+  stopPolling();
   dashboard.style.display = 'none';
   loginPanel.style.display = '';
   adminMeta.textContent = '';
@@ -83,15 +110,19 @@ async function enterDashboard() {
   loginPanel.style.display = 'none';
   dashboard.style.display = '';
   adminMeta.textContent = `AUTHENTICATED · ${new Date().toLocaleString('ko-KR')}`;
-  await loadSubmissions();
+  await requestNotificationPermission();
+  await loadSubmissions({ initial: true });
+  startPolling();
 }
 
-async function loadSubmissions() {
+async function loadSubmissions({ initial = false, silent = false } = {}) {
   const token = getToken();
   if (!token) return;
 
-  submissionsEl.innerHTML = '<div class="empty">불러오는 중...</div>';
-  emptyState.style.display = 'none';
+  if (!silent) {
+    submissionsEl.innerHTML = '<div class="empty">불러오는 중...</div>';
+    emptyState.style.display = 'none';
+  }
 
   try {
     const res = await fetch(`${SERVER_URL}/admin/submissions`, {
@@ -100,6 +131,7 @@ async function loadSubmissions() {
 
     if (res.status === 401) {
       clearToken();
+      stopPolling();
       dashboard.style.display = 'none';
       loginPanel.style.display = '';
       loginError.textContent = '세션이 만료되었습니다. 다시 로그인해주세요.';
@@ -109,12 +141,80 @@ async function loadSubmissions() {
     if (!res.ok) throw new Error(`서버 오류: ${res.status}`);
 
     const data = await res.json();
-    allSubmissions = data.submissions || [];
+    const newList = data.submissions || [];
+
+    detectAndNotifyNew(newList, { initial });
+
+    allSubmissions = newList;
     renderStats();
     applyFilters();
   } catch (err) {
-    submissionsEl.innerHTML = `<div class="empty">불러오기 실패: ${err.message}</div>`;
+    if (!silent) {
+      submissionsEl.innerHTML = `<div class="empty">불러오기 실패: ${err.message}</div>`;
+    }
   }
+}
+
+// ============ POLLING ============
+function startPolling() {
+  stopPolling();
+  pollTimer = setInterval(() => {
+    loadSubmissions({ silent: true });
+  }, POLL_INTERVAL_MS);
+}
+
+function stopPolling() {
+  if (pollTimer) {
+    clearInterval(pollTimer);
+    pollTimer = null;
+  }
+}
+
+// ============ NOTIFICATIONS ============
+async function requestNotificationPermission() {
+  if (!('Notification' in window)) return;
+  if (Notification.permission === 'default') {
+    try { await Notification.requestPermission(); } catch {}
+  }
+}
+
+function detectAndNotifyNew(newList, { initial }) {
+  const seen = getSeenIds();
+  const currentIds = newList.map(s => s.applicationId).filter(Boolean);
+
+  if (initial) {
+    // 최초 로드 시에는 알림 없이 기준선만 저장
+    setSeenIds(new Set(currentIds));
+    return;
+  }
+
+  const added = newList.filter(s => s.applicationId && !seen.has(s.applicationId));
+  if (added.length > 0) {
+    showNewSubmissionNotification(added);
+  }
+
+  setSeenIds(new Set(currentIds));
+}
+
+function showNewSubmissionNotification(added) {
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+  const title = added.length === 1
+    ? `새 지원서: ${added[0].teamName || '(팀명 없음)'}`
+    : `새 지원서 ${added.length}건 도착`;
+
+  const body = added
+    .slice(0, 3)
+    .map(s => `${s.teamName || '(팀명 없음)'} · ${(s.members || []).length}명`)
+    .join('\n');
+
+  try {
+    const n = new Notification(title, { body, tag: 'kic-new-submission' });
+    n.onclick = () => {
+      window.focus();
+      n.close();
+    };
+  } catch {}
 }
 
 function renderStats() {
@@ -309,6 +409,11 @@ csvBtn.addEventListener('click', () => {
 });
 
 // ============ AUTO-LOGIN ============
-if (getToken()) {
-  enterDashboard();
+const existingToken = getToken();
+if (existingToken) {
+  if (isTokenExpired(existingToken)) {
+    clearToken();
+  } else {
+    enterDashboard();
+  }
 }
