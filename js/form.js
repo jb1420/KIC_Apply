@@ -2,7 +2,7 @@ const STORAGE_KEY = 'kic2026-draft-v2';
 const SERVER_URL = 'https://jb1420.pythonanywhere.com/enroll'; // 나중에 서버 URL 입력 (예: https://api.your-server.com/submissions)
 let currentStep = 1;
 const totalSteps = 3;
-const stepNames = ['TEAM', 'CREW', 'CONFIRM'];
+const stepNames = ['CREW', 'TEAM', 'CONFIRM'];
 
 const membersWrap = document.getElementById('membersWrap');
 const addMemberBtn = document.getElementById('addMemberBtn');
@@ -187,13 +187,6 @@ function showError(name, msg) {
 function validateStep(n) {
   let valid = true;
   if (n === 1) {
-    const teamName = document.querySelector('[name="teamName"]');
-    if (!teamName.value.trim()) {
-      showError('teamName', '팀명을 입력해주세요');
-      valid = false;
-    } else showError('teamName', '');
-  }
-  if (n === 2) {
     const cards = membersWrap.querySelectorAll('.member');
     if (cards.length < 3) {
       alert('최소 3명의 팀원이 필요합니다.');
@@ -210,6 +203,13 @@ function validateStep(n) {
       });
     });
     if (!valid) alert('모든 팀원 정보를 올바르게 입력해주세요.');
+  }
+  if (n === 2) {
+    const teamName = document.querySelector('[name="teamName"]');
+    if (!teamName.value.trim()) {
+      showError('teamName', '팀명을 입력해주세요');
+      valid = false;
+    } else showError('teamName', '');
   }
   if (n === 3) {
     const chks = document.querySelectorAll('.check input[type="checkbox"]');
@@ -313,7 +313,7 @@ function collectFormData() {
   };
 }
 
-document.querySelectorAll('.step[data-step="1"] input').forEach(el => {
+document.querySelectorAll('.step[data-step="2"] input').forEach(el => {
   el.addEventListener('input', saveDraft);
   el.addEventListener('change', saveDraft);
 });

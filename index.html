@@ -397,14 +397,26 @@
       </div>
       <div class="progress-label">
         <span>STEP <span class="curr" id="currStep">01</span> / 03</span>
-        <span id="stepName">TEAM</span>
+        <span id="stepName">CREW</span>
       </div>
     </div>
 
     <form class="modal-body" id="kicForm" novalidate>
 
-      <!-- STEP 1: TEAM -->
-      <div class="step active" data-step="2">
+      <!-- STEP 1: CREW -->
+      <div class="step active" data-step="1">
+        <div class="step-intro">Your crew.</div>
+        <div class="step-desc">팀원 정보를 입력하세요. 최소 3명, 최대 4명까지 가능합니다. 첫 번째 팀원이 팀장 역할을 맡게 됩니다.</div>
+
+        <div id="membersWrap"></div>
+
+        <button type="button" class="add-btn" id="addMemberBtn">
+          + ADD MEMBER
+        </button>
+      </div>
+
+      <!-- STEP 2: TEAM -->
+      <div class="step" data-step="2">
         <div class="step-intro">Your team.</div>
         <div class="step-desc">팀 기본 정보를 입력해주세요. 팀명은 행사 전반에서 사용됩니다.</div>
 
@@ -418,18 +430,6 @@
           <label class="field-label">팀 슬로건 / 한 줄 포부</label>
           <input type="text" class="field-input" name="teamSlogan" maxlength="60" placeholder="24시간 뒤, 세상은 우리를 기억할 것이다">
         </div> -->
-      </div>
-
-      <!-- STEP 2: CREW -->
-      <div class="step" data-step="1">
-        <div class="step-intro">Your crew.</div>
-        <div class="step-desc">팀원 정보를 입력하세요. 최소 3명, 최대 4명까지 가능합니다. 첫 번째 팀원이 팀장 역할을 맡게 됩니다.</div>
-
-        <div id="membersWrap"></div>
-
-        <button type="button" class="add-btn" id="addMemberBtn">
-          + ADD MEMBER
-        </button>
       </div>
 
       <!-- STEP 3: CONFIRM -->
