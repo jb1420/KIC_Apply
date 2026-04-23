@@ -111,7 +111,7 @@ async function loadSubmissions() {
     const data = await res.json();
     allSubmissions = data.submissions || [];
     renderStats();
-    renderSubmissions(allSubmissions);
+    applyFilters();
   } catch (err) {
     submissionsEl.innerHTML = `<div class="empty">불러오기 실패: ${err.message}</div>`;
   }
